@@ -32,7 +32,12 @@ namespace Supershop
             });
 
             services.AddTransient<SeedDb>();
-            
+            // Register the repository as a service
+            services.AddScoped<IRepository, Repository>();
+            // Use MockRepository for testing purposes
+            //services.AddScoped<IRepository, MockRepository>(); 
+
+
 
             services.AddControllersWithViews();
         }
