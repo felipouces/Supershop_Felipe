@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Supershop.Data.Entities
 {
+    // This class represents a product entity in the Supershop application.
+
     public class Product : IEntity  // Assuming IEntity is an interface that defines an Id property
     {
 
@@ -30,5 +32,9 @@ namespace Supershop.Data.Entities
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public double Stock { get; set; } = 0.0;
 
+
+        // Each product that is inserted will have to have a User
+        public User User { get; set; }
+        // Creating a one-to-many relationship. Because a user can have many products
     }
 }

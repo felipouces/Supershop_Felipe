@@ -5,5 +5,7 @@
         int Id { get; set; }
        
         //bool WasDeleted { get; set; }
+
+       
     }
 }

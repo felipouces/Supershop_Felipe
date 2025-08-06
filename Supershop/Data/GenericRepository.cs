@@ -19,6 +19,7 @@ namespace Supershop.Data
         public IQueryable<T> GetAll()
         {
             return _context.Set<T>().AsNoTracking();
+          
         }
 
         // Method to create a new entity of type T

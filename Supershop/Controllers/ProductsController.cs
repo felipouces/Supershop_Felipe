@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Supershop.Data;
 using Supershop.Data.Entities;
+using Supershop.Helpers;
 
 namespace Supershop.Controllers
 {
@@ -14,20 +15,32 @@ namespace Supershop.Controllers
     {
         
         private readonly IProductRepository _productRepository;
+        private readonly IUserHelper _userHelper;
 
-        public ProductsController(IProductRepository productRepository)
+        public ProductsController(IProductRepository productRepository,
+            IUserHelper userHelper)
         {
             _productRepository = productRepository;
+            _userHelper = userHelper;
         }
+
+        // GET: Products
+        /*public IActionResult Index()
+        {
+            return View(_productRepository.GetAll());
+        }*/
 
         // GET: Products
         public IActionResult Index()
         {
-            return View(_productRepository.GetAll());
+            var products = _productRepository.GetAll()
+                                             .OrderBy(p => p.Name); // ordena  ascendente
+            return View(products);
         }
 
+
         // GET: Products/Details/5
-        public  async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -58,7 +71,10 @@ namespace Supershop.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+                // Here we are setting the User property of the product to a specific user
+                // In a real application, you might want to get the current logged-in user instead
+
+                product.User = await _userHelper.GetUserByEmailAsync("felipe.g.sales1985@gmail.com");
                 await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
@@ -97,6 +113,8 @@ namespace Supershop.Controllers
             {
                 try
                 {
+                    // Here we are setting the User property of the product to a specific user
+                    product.User = await _userHelper.GetUserByEmailAsync("felipe.g.sales1985@gmail.com"); // Replace with the actual user email or logic to get the current user
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
