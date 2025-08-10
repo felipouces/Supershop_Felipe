@@ -36,5 +36,22 @@ namespace Supershop.Data.Entities
         // Each product that is inserted will have to have a User
         public User User { get; set; }
         // Creating a one-to-many relationship. Because a user can have many products
+
+
+        // Create read-only property, and this property also gives the image path
+        public string ImageFullPatch
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageUrl))
+                {
+                    return null;
+                }
+                // If I had published it on Azure I would have put the full address, but in this case I'm putting the localhost address.
+                return $"https://localhost:44325{ImageUrl.Substring(1)}"; 
+            }
+        }
+
+
     }
 }
