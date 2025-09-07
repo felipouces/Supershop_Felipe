@@ -52,6 +52,8 @@ namespace Supershop
             services.AddTransient<SeedDb>();
 
             services.AddScoped<IUserHelper, UserHelper>();
+            services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IConverterHelper, ConverterHelper>();
 
 
             // Register the repository as a service

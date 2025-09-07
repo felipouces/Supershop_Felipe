@@ -19,12 +19,18 @@ namespace Supershop.Controllers
         
         private readonly IProductRepository _productRepository;
         private readonly IUserHelper _userHelper;
+        private readonly IImageHelper _imageHelper;
+        private readonly IConverterHelper _converterHelper;
 
         public ProductsController(IProductRepository productRepository,
-            IUserHelper userHelper)
+            IUserHelper userHelper,
+            IImageHelper imageHelper,
+            IConverterHelper converterHelper)
         {
             _productRepository = productRepository;
             _userHelper = userHelper;
+            _imageHelper = imageHelper;
+            _converterHelper = converterHelper;
         }
 
         // GET: Products
@@ -82,31 +88,13 @@ namespace Supershop.Controllers
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 // optional image upload
                 {
-
-                    // Generate a unique identifier for the image file
-                    var guid = Guid.NewGuid().ToString();
-                    // Get the file extension of the uploaded image
-                    var file = $"{guid}.jpg";
-
-                    // Build the path where you will record it
-                    //path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\image\\products", model.ImageFile.FileName);
-                    path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\image\\products", file);
-
-                    // now I'm going to record
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
-
-                    // and now I assign the path to the product
-                    //build the path that I will put in the database
-                    //path = $"~/image/products/{model.ImageFile.FileName}";
-                    path = $"~/image/products/{file}";
+                    // Call the UploadImageAsync method from the ImageHelper class to upload the image and get the path
+                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
 
                 }
 
-                // Create Method to convert ProductViewModel to Product
-                var product = this.ToProduct(model, path);
+              
+                var product =  _converterHelper.ToProduct(model, path, true);
 
                 // Here we are setting the User property of the product to a specific user
                 // In a real application, you might want to get the current logged-in user instead
@@ -119,21 +107,21 @@ namespace Supershop.Controllers
         }
 
         // Method to convert ProductViewModel to Product
-        private Product ToProduct(ProductViewModel model, string path)
+        /*private Product ToProduct(ProductViewModel model, string path)
         {
             return new Product
             {
                 Id = model.Id,
                 Name = model.Name,
                 Price = model.Price,
-                ImageUrl = path, // Use the path for the image URL
+                ImageUrl = path,  Use the path for the image URL
                 LastPurchase = model.LastPurchase,
                 LastSale = model.LastSale,
                 IsAvailable = model.IsAvailable,
                 Stock = model.Stock,
-                User = model.User // Assuming User is a property in ProductViewModel
+                User = model.User  Assuming User is a property in ProductViewModel
             };
-        }
+        }*/
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -149,11 +137,13 @@ namespace Supershop.Controllers
                 return NotFound();
             }
 
-            var model = this.ToProductViewModel(product);
+            
+            var model = _converterHelper.ToProductViewModel(product);
+
             return View(model);
         }
 
-        private ProductViewModel ToProductViewModel(Product product)
+        /*private ProductViewModel ToProductViewModel(Product product)
         {
             return new ProductViewModel
             {
@@ -165,9 +155,9 @@ namespace Supershop.Controllers
                 LastSale = product.LastSale,
                 IsAvailable = product.IsAvailable,
                 Stock = product.Stock,
-                User = product.User // Assuming User is a property in Product
+                User = product.User  Assuming User is a property in Product
             };
-        }
+        }*/
 
         // POST: Products/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -192,25 +182,10 @@ namespace Supershop.Controllers
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
 
-                        // Generate a unique identifier for the image file
-                        var guid = Guid.NewGuid().ToString();
-                        // Get the file extension of the uploaded image
-                        var file = $"{guid}.jpg";
-
-                        // Build the path where you will record it
-                        path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\image\\products", file);
-
-                        // now I'm going to record
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await model.ImageFile.CopyToAsync(stream);
-                        }
-                        // and now I assign the path to the product
-                        //build the path that I will put in the database
-                        path = $"~/image/products/{file}";
+                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
                     }
 
-                    var product = this.ToProduct(model, path);
+                    var product = _converterHelper.ToProduct(model, path, false);
 
                     // Here we are setting the User property of the product to a specific user
                     product.User = await _userHelper.GetUserByEmailAsync("felipe.g.sales1985@gmail.com"); // Replace with the actual user email or logic to get the current user
