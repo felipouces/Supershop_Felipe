@@ -28,6 +28,14 @@ namespace Supershop.Controllers
             return View();
         }
 
+        // Action temporaria para simular o login
+        /*public IActionResult Welcome(string email)
+        {
+            ViewBag.Email = email;
+            return View();
+        }*/
+
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

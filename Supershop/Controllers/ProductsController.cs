@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ using Supershop.Models;
 
 namespace Supershop.Controllers
 {
+    [Authorize] // Ensure the user is authenticated to access any action in this controller
+
     public class ProductsController : Controller
     {
         
