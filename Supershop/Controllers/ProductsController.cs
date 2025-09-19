@@ -15,7 +15,9 @@ using Supershop.Models;
 
 namespace Supershop.Controllers
 {
-    [Authorize] // Ensure the user is authenticated to access any action in this controller
+    //[Authorize]  Ensure the user is authenticated to access any action in this controller
+    // The [Authorize] attribute can be applied at the controller level to enforce authentication for all actions within the controller.
+    // If you want to allow anonymous access to specific actions, you can use the [AllowAnonymous] attribute on those actions.
 
     public class ProductsController : Controller
     {
@@ -52,6 +54,7 @@ namespace Supershop.Controllers
 
 
         // GET: Products/Details/5
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -81,6 +84,7 @@ namespace Supershop.Controllers
         [ValidateAntiForgeryToken]
         //public async Task<IActionResult> Create([Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock")] Product product)
         //public async Task<IActionResult> Create([Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock, User")] ProductViewModel model)
+        [Authorize] // Ensure the user is authenticated to access this action
         public async Task<IActionResult> Create(ProductViewModel model)
         {
             if (ModelState.IsValid)
@@ -101,7 +105,8 @@ namespace Supershop.Controllers
 
                 // Here we are setting the User property of the product to a specific user
                 // In a real application, you might want to get the current logged-in user instead
-                product.User = await _userHelper.GetUserByEmailAsync("felipe.g.sales1985@gmail.com");
+                //product.User = await _userHelper.GetUserByEmailAsync("felipe.g.sales1985@gmail.com");
+                product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name); // Get the current logged-in user
                 await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
@@ -127,6 +132,7 @@ namespace Supershop.Controllers
         }*/
 
         // GET: Products/Edit/5
+        [Authorize] // Ensure the user is authenticated to access this action
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -191,7 +197,8 @@ namespace Supershop.Controllers
                     var product = _converterHelper.ToProduct(model, path, false);
 
                     // Here we are setting the User property of the product to a specific user
-                    product.User = await _userHelper.GetUserByEmailAsync("felipe.g.sales1985@gmail.com"); // Replace with the actual user email or logic to get the current user
+                   // product.User = await _userHelper.GetUserByEmailAsync("felipe.g.sales1985@gmail.com");
+                    product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name); // Get the current logged-in user
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -211,6 +218,7 @@ namespace Supershop.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize] // Ensure the user is authenticated to access this action
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
