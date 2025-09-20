@@ -29,6 +29,9 @@ namespace Supershop.Data
         {
             await _context.Database.EnsureCreatedAsync(); // Checks if the database exists, otherwise it creates it.
 
+            await _userHelper.CheckRoleAsync("Admin");
+            await _userHelper.CheckRoleAsync("Customer");
+
             // Check if there are any users in the database
             //var user = await _userManager.FindByEmailAsync("felipe.g.sales1985@gmail.com"); // Check if a user with an empty email exists
 
@@ -53,6 +56,14 @@ namespace Supershop.Data
                 {
                    throw new InvalidOperationException("Could not create user in seeding database"); // If the user creation fails, throw an exception
                 }
+
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
+            }
+
+            var isInRole = await _userHelper.IsUserInRoleAsync(user, "Admin");
+            if (!isInRole)
+            {
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
             }
 
             // Check if there are any products in the database

@@ -72,6 +72,7 @@ namespace Supershop.Controllers
         }
 
         // GET: Products/Create
+        [Authorize(Roles = "Admin")] // Ensure the user is authenticated and in the Admin role to access this action
         public IActionResult Create()
         {
             return View();
@@ -84,7 +85,7 @@ namespace Supershop.Controllers
         [ValidateAntiForgeryToken]
         //public async Task<IActionResult> Create([Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock")] Product product)
         //public async Task<IActionResult> Create([Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock, User")] ProductViewModel model)
-        [Authorize] // Ensure the user is authenticated to access this action
+      
         public async Task<IActionResult> Create(ProductViewModel model)
         {
             if (ModelState.IsValid)
