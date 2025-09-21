@@ -21,7 +21,7 @@ namespace Supershop.Controllers
 
     public class ProductsController : Controller
     {
-        
+
         private readonly IProductRepository _productRepository;
         private readonly IUserHelper _userHelper;
         private readonly IImageHelper _imageHelper;
@@ -54,18 +54,19 @@ namespace Supershop.Controllers
 
 
         // GET: Products/Details/5
-
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                //return NotFound();
+                return new NotFoundViewResult("ProductNotFound"); // Custom 404 view
             }
 
             var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
-                return NotFound();
+                //return NotFound();
+                return new NotFoundViewResult("ProductNotFound"); // Custom 404 view
             }
 
             return View(product);
@@ -85,7 +86,7 @@ namespace Supershop.Controllers
         [ValidateAntiForgeryToken]
         //public async Task<IActionResult> Create([Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock")] Product product)
         //public async Task<IActionResult> Create([Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock, User")] ProductViewModel model)
-      
+
         public async Task<IActionResult> Create(ProductViewModel model)
         {
             if (ModelState.IsValid)
@@ -101,8 +102,8 @@ namespace Supershop.Controllers
 
                 }
 
-              
-                var product =  _converterHelper.ToProduct(model, path, true);
+
+                var product = _converterHelper.ToProduct(model, path, true);
 
                 // Here we are setting the User property of the product to a specific user
                 // In a real application, you might want to get the current logged-in user instead
@@ -138,16 +139,18 @@ namespace Supershop.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                //return NotFound();
+                return new NotFoundViewResult("ProductNotFound"); // Custom 404 view
             }
 
             var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
-                return NotFound();
+                //return NotFound();
+                return new NotFoundViewResult("ProductNotFound"); // Custom 404 view
             }
 
-            
+
             var model = _converterHelper.ToProductViewModel(product);
 
             return View(model);
@@ -186,7 +189,7 @@ namespace Supershop.Controllers
                 try
                 {
                     // save the image path
-                    var path = model.ImageUrl; 
+                    var path = model.ImageUrl;
                     // Use the existing image URL if no new image is uploaded
 
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
@@ -198,13 +201,13 @@ namespace Supershop.Controllers
                     var product = _converterHelper.ToProduct(model, path, false);
 
                     // Here we are setting the User property of the product to a specific user
-                   // product.User = await _userHelper.GetUserByEmailAsync("felipe.g.sales1985@gmail.com");
+                    // product.User = await _userHelper.GetUserByEmailAsync("felipe.g.sales1985@gmail.com");
                     product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name); // Get the current logged-in user
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (! await _productRepository.ExistAsync(model.Id))
+                    if (!await _productRepository.ExistAsync(model.Id))
                     {
                         return NotFound();
                     }
@@ -224,13 +227,15 @@ namespace Supershop.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                //return NotFound();
+                return new NotFoundViewResult("ProductNotFound"); // Custom 404 view
             }
 
             var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
-                return NotFound();
+                //return NotFound();
+                return new NotFoundViewResult("ProductNotFound"); // Custom 404 view
             }
 
             return View(product);
@@ -244,6 +249,11 @@ namespace Supershop.Controllers
             var product = await _productRepository.GetByIdAsync(id);
             await _productRepository.DeleteAsync(product);
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult ProductNotFound()
+        {
+            return View();
         }
     }
 }
