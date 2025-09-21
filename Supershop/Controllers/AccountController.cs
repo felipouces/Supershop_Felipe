@@ -80,6 +80,8 @@ namespace Supershop.Controllers
                         UserName = model.Username
                     };
 
+
+
                     var result = await _userHelper.AddUserAsync(user, model.Password);
                     if (result != IdentityResult.Success)
                     {

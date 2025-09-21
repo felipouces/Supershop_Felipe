@@ -133,7 +133,7 @@ namespace Supershop.Controllers
         }*/
 
         // GET: Products/Edit/5
-        [Authorize] // Ensure the user is authenticated to access this action
+        [Authorize(Roles = "Admin")] // Ensure the user is authenticated and in the Admin role to access this action
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -219,7 +219,7 @@ namespace Supershop.Controllers
         }
 
         // GET: Products/Delete/5
-        [Authorize] // Ensure the user is authenticated to access this action
+        [Authorize(Roles = "Admin")] // Ensure the user is authenticated and in the Admin role to access this action
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
