@@ -61,6 +61,8 @@ namespace Supershop
             // Use MockRepository for testing purposes
             //services.AddScoped<IRepository, MockRepository>(); 
 
+            services.AddScoped<IOrderRepository, OrderRepository>();
+
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/NotAuthorized";
