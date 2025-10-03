@@ -18,10 +18,27 @@ namespace Supershop.Data
             _userHelper = userHelper;
         }
 
+        public async Task<IQueryable<OrderDetailsTemp>> GetDetailTempsAsync(string userName)
+        {
+            var user = await  _userHelper.GetUserByEmailAsync(userName);
+            if (user == null)
+            {
+                return null;
+            }
+
+            return _context.OrderDetailsTemps
+                .Include(p => p.Product)
+                .Where(o => o.User.Id == user.Id)
+                //.Where(o => o.User == user)
+                //.OrderBy(p => p.OrderDate);
+                .OrderBy(o => o.Product.Name);
+
+        }
+
         public async Task<IQueryable<Order>> GetOrderAsync(string userName)
         {
             var user = await _userHelper.GetUserByEmailAsync(userName);
-            if (user == null) 
+            if (user == null) // || !(await _userHelper.IsUserInRoleAsync(user, "Admin"))
             {
                 return null;
             }
@@ -30,13 +47,13 @@ namespace Supershop.Data
             {
                 return _context.Orders
                     .Include(o => o.Items)
-                    .ThenInclude(i => i.Product)
+                    .ThenInclude(p => p.Product)
                     .OrderByDescending(o => o.OrderDate);
             }
             
             return _context.Orders
                 .Include(o => o.Items)
-                .ThenInclude(i => i.Product)
+                .ThenInclude(p => p.Product)
                 .Where(o => o.User == user)
                 .OrderByDescending(o => o.OrderDate);
         }

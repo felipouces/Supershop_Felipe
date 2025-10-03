@@ -1,4 +1,7 @@
-﻿using Supershop.Data.Entities;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Supershop.Data.Entities;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Supershop.Data
@@ -8,6 +11,9 @@ namespace Supershop.Data
 
         // This interface extends the generic repository for Product entities
         public IQueryable GetAllWithUsers();
+
+
+        IEnumerable<SelectListItem> GetComboProducts();
 
     }
 }

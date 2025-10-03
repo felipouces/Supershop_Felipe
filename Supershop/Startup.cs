@@ -86,7 +86,7 @@ namespace Supershop
                 app.UseHsts();
             }
 
-            app.UseStatusCodePagesWithReExecute("/error/{0}");
+            app.UseStatusCodePagesWithReExecute("/error/{0}"); // Handle status code errors by redirecting to the Error controller
 
 
             app.UseHttpsRedirection();

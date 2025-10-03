@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Supershop
+namespace Supershop.Helpers
 {
     public class NotFoundViewResult : ViewResult
     {

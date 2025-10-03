@@ -9,5 +9,6 @@ namespace Supershop.Data
 
         Task<IQueryable<Order>> GetOrderAsync(string userName); // method to get orders by user name
 
+        Task<IQueryable<OrderDetailsTemp>> GetDetailTempsAsync(string userName); // method to get temporary order details by user name
     }
 }

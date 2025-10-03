@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Supershop.Data.Entities
 {
@@ -12,6 +13,7 @@ namespace Supershop.Data.Entities
         // Since I'll have to use authentication, I can't use my simple DataContext.
         // I have authentication, and it will be different.
 
+        [Display(Name = "Full Name")]
         public string FullName => $"{FirstName} {LastName}";
     }
 }
