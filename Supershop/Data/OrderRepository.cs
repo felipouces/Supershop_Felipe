@@ -56,6 +56,50 @@ namespace Supershop.Data
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> ConfirmOrderAsync(string userName)
+        {
+            // Get the user by their email (userName)
+            var user = await _userHelper.GetUserByEmailAsync(userName);
+            if (user == null)
+            {
+                return false;
+            }
+
+            // Retrieve all temporary order details for the user
+            var orderTmps = await _context.OrderDetailsTemps
+                .Include(o => o.Product)
+                .Where(o => o.User == user)
+                .ToListAsync();
+
+            // If there are no temporary order details, return false
+            if (orderTmps == null || orderTmps.Count == 0)
+            {
+                return false;
+            }
+
+            // Create order details from the temporary order details
+            var details = orderTmps.Select(o => new OrderDetail
+            {
+                Price = o.Price,
+                Product = o.Product,
+                Quantity = o.Quantity,
+            }).ToList();
+
+            // Create a new order with the user and the order details
+            var order = new Order
+            {
+                OrderDate = System.DateTime.UtcNow,
+                User = user,
+                Items = details
+            };
+
+            // Save the new order to the database
+            await CreateAsync(order);
+            _context.OrderDetailsTemps.RemoveRange(orderTmps);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task DeleteDetailTempAsync(int id)
         {
             var orderDetailTemp = await _context.OrderDetailsTemps.FindAsync(id);
@@ -96,6 +140,7 @@ namespace Supershop.Data
             if (await _userHelper.IsUserInRoleAsync(user, "Admin"))
             {
                 return _context.Orders
+                    .Include(o => o.User)
                     .Include(o => o.Items)
                     .ThenInclude(p => p.Product)
                     .OrderByDescending(o => o.OrderDate);

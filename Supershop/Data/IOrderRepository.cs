@@ -17,5 +17,7 @@ namespace Supershop.Data
         Task ModifyOrderDetailTempQuantityAsync(int id, double quantity); // method to modify the quantity of a temporary order detail
 
         Task DeleteDetailTempAsync(int id);
+
+        Task<bool> ConfirmOrderAsync(string userName); // method to confirm the order for a user
     }
 }
